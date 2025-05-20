@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 import styles from '../Nav.module.css';
 
 export default function Nav() {
-  const { url } = usePage();
+  const { url, props } = usePage();
+
+  // Assume profile image URL is available as `props.auth.user.profile_photo_url`
+  const defaultAvatar = 'profile.png'; // you should have this in your public folder
+  const [profileImage, setProfileImage] = useState(defaultAvatar);
+
+  useEffect(() => {
+    if (props.auth?.user?.profile_photo_url) {
+      setProfileImage(props.auth.user.profile_photo_url);
+    }
+  }, [props]);
 
   return (
     <ul className={styles.navbar}>
@@ -18,15 +28,26 @@ export default function Nav() {
       </li>
       <li
         className={`${styles.navItem} ${url === '/cart' ? styles.active : ''}`}
-        style={{ marginLeft: 'auto' }} // keeps the cart to the right
+        style={{ marginLeft: 'auto' }}
       >
         <a href="/cart">🛒Your Cart</a>
       </li>
       <li
-        className={`${styles.navItem} ${url === '/cart' ? styles.active : ''}`}
-        style={{ marginLeft: 'auto' }} // keeps the cart to the right
+        className={`${styles.navItem} ${url === '/profile' ? styles.active : ''}`}
       >
-        <a href="/cart"> <img src="" alt="" srcset="" />  Profile</a>
+        <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src={profileImage}
+            alt="Profile"
+            style={{
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+            }}
+          />
+          Profile
+        </a>
       </li>
     </ul>
   );
